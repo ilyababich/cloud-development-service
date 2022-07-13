@@ -11,6 +11,13 @@ const getProductById: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
   const {id: productId} = event.pathParameters;
   const product = productList.find((el) => el.id === productId)
 
+  if (!product) {
+    return formatJSONResponse({
+      message: 'Product Not Found!',
+      event,  
+    }, 404)
+  }
+
   return formatJSONResponse({
     product: product,
     event,
