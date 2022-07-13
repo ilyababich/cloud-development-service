@@ -12,7 +12,7 @@ const getProductById: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
   const product = productList.find((el) => el.id === productId)
 
   return formatJSONResponse({
-    data: product,
+    product: product,
     event,
   });
 };
