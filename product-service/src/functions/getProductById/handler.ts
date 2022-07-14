@@ -2,7 +2,7 @@ import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { formatJSONResponse } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 
-import productList from '../../mocks/productList.json'
+import productList from '@mocks/productList';
 
 import schema from './schema';
 
@@ -10,13 +10,13 @@ const getProductList = async () => {
   return Promise.resolve(productList);
 }
 
-const getProductById: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+export const getProductById: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 
   const {id: productId} = event.pathParameters;
 
   const products = await getProductList();
 
-  const product = products.find((el) => el.id === productId)
+  const product = products && products.find((el) => el.id === productId)
 
   if (!product) {
     return formatJSONResponse({
@@ -26,7 +26,7 @@ const getProductById: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
   }
 
   return formatJSONResponse({
-    product: product,
+    product,
     event,
   });
 };

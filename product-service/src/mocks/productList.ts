@@ -1,4 +1,4 @@
-[
+const productList = [
   {
     "count": 4,
     "description": "Custom Short Product Description1",
@@ -55,4 +55,6 @@
     "price": 15,
     "title": "ProductName"
   }
-]
+];
+
+export default productList;
