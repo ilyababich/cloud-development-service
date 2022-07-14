@@ -6,10 +6,17 @@ import productList from '../../mocks/productList.json'
 
 import schema from './schema';
 
+const getProductList = async () => {
+  return Promise.resolve(productList);
+}
+
 const getProductById: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 
   const {id: productId} = event.pathParameters;
-  const product = productList.find((el) => el.id === productId)
+
+  const products = await getProductList();
+
+  const product = products.find((el) => el.id === productId)
 
   if (!product) {
     return formatJSONResponse({
