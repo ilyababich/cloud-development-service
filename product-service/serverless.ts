@@ -1,6 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
-import { getProductsList, getProductById } from './src/functions';
+import { getProductsList, getProductById, createProduct } from './src/functions';
 
 const serverlessConfiguration: AWS = {
   service: 'product-service',
@@ -21,7 +21,7 @@ const serverlessConfiguration: AWS = {
     },
   },
   // import the function via paths
-  functions: { getProductsList, getProductById },
+  functions: { getProductsList, getProductById, createProduct },
   package: { individually: true },
   custom: {
     esbuild: {
@@ -38,6 +38,9 @@ const serverlessConfiguration: AWS = {
       webpackConfig: 'webpack.config.js',
       includeModules: true,
       excludeFiles: 'src/**/*.test.ts'
+    },
+    autoswagger: {
+      host: 'https://1hf6b7hpr5.execute-api.eu-west-1.amazonaws.com'
     }
   },
 };

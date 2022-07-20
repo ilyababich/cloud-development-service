@@ -1,6 +1,7 @@
 const documentation = {
-    summary: 'getProductsList',
-    description: 'Get products list',
+    summary: 'getProductById',
+    description: 'Get product by id',
+    bodyType: 'CreateProduct',
     responses: {
         200: {
             description: 'Ok',

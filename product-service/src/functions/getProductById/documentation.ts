@@ -9,6 +9,10 @@ const documentation = {
         404: {
             description: 'Not Found',
             bodyType: 'GetProductByIdFailed',
+        },
+        500: {
+            description: 'Something went wrong!',
+            bodyType: 'CommonFailed',
         }
     }
 }
