@@ -24,6 +24,48 @@
             "schema": {
               "$ref": "#/definitions/GetProductsList"
             }
+          },
+          "500": {
+            "description": "Something went wrong!",
+            "schema": {
+              "$ref": "#/definitions/CommonFailed"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "getProductById",
+        "description": "Get product by id",
+        "operationId": "createProduct.post.products",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Body required in the request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateProduct"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "$ref": "#/definitions/GetProductsList"
+            }
+          },
+          "500": {
+            "description": "Something went wrong!",
+            "schema": {
+              "$ref": "#/definitions/CommonFailed"
+            }
           }
         }
       }
@@ -58,6 +100,12 @@
             "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/GetProductByIdFailed"
+            }
+          },
+          "500": {
+            "description": "Something went wrong!",
+            "schema": {
+              "$ref": "#/definitions/CommonFailed"
             }
           }
         }
@@ -129,6 +177,55 @@
       "title": "GetProductsList",
       "type": "object"
     },
+    "CreateProduct": {
+      "properties": {
+        "title": {
+          "title": "CreateProduct.title",
+          "type": "string"
+        },
+        "description": {
+          "title": "CreateProduct.description",
+          "type": "string"
+        },
+        "price": {
+          "title": "CreateProduct.price",
+          "type": "number"
+        },
+        "count": {
+          "title": "CreateProduct.count",
+          "type": "number"
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "price",
+        "count"
+      ],
+      "additionalProperties": false,
+      "title": "CreateProduct",
+      "type": "object"
+    },
+    "CommonFailed": {
+      "properties": {
+        "message": {
+          "title": "CommonFailed.message",
+          "type": "string"
+        },
+        "event": {
+          "additionalProperties": false,
+          "title": "CommonFailed.event",
+          "type": "object"
+        }
+      },
+      "required": [
+        "message",
+        "event"
+      ],
+      "additionalProperties": false,
+      "title": "CommonFailed",
+      "type": "object"
+    },
     "Product": {
       "properties": {
         "count": {
@@ -164,5 +261,6 @@
       "type": "object"
     }
   },
-  "securityDefinitions": {}
+  "securityDefinitions": {},
+  "host": "https://1hf6b7hpr5.execute-api.eu-west-1.amazonaws.com"
 };
