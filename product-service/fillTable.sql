@@ -45,3 +45,8 @@ insert into stocks (product_id, count) values ('352c1a83-69c6-4b0c-ab1b-c37e7aee
 --Show products table
 select * from products;
 
+select  * from stocks;
+
+select p.id, p.title, p.description, p.price, s.count 
+from products p, stocks s 
+where p.id = s.product_id and p.id = 'f7fa737a-6e3b-4328-86c6-0429e0c0bcaa'; 
