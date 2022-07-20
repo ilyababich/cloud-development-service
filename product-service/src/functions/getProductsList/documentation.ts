@@ -1,7 +1,7 @@
 const documentation = {
     summary: 'getProductsList',
     description: 'Get products list',
-    responses: {
+    responseData: {
         200: {
             description: 'Ok',
             bodyType: 'GetProductsList',

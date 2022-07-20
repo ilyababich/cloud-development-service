@@ -4,7 +4,6 @@ type TProduct = {
     title: string;
     description: string;
     price: number;
-    count: number;
 }
 
 class PostgressProductService {
@@ -34,23 +33,16 @@ class PostgressProductService {
 
     }
 
-    public async createProduct ({ title, description, price, count }: TProduct) {
+    public async createProduct ({ title, description, price }: TProduct) {
         const createProductQuery = {
             text: `insert into ${this.productsTable} (title, description, price) values ($1,$2,$3);`,
             values: [title, description, price]
         }
 
-        const {rows: productsTableRows} = await this.databaseClient.query(createProductQuery);
+        const result = await this.databaseClient.query(createProductQuery);
 
-        const createStockQuery = {
-            text: `insert into ${this.stocksTable}  (product_id, count) values ($1, $2);`,
-            values: [productsTableRows[productsTableRows.length - 1].id, count]
-        }
-
-        await this.databaseClient.query(createStockQuery);
-
-        const result = await this.getProductList();
-        return result;
+        
+        return result.rows[0] ? result.rows[0] : null;
     }
 }
 
