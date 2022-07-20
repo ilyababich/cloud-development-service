@@ -5,7 +5,7 @@ import { getProductsList, getProductById, createProduct } from './src/functions'
 const serverlessConfiguration: AWS = {
   service: 'product-service',
   frameworkVersion: '3',
-  plugins: ['serverless-esbuild', 'serverless-webpack', 'serverless-auto-swagger'],
+  plugins: ['serverless-webpack', 'serverless-auto-swagger'],
   useDotenv: true,
   provider: {
     name: 'aws',

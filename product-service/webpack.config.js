@@ -1,5 +1,6 @@
 const path = require('path');
 const slsw = require('serverless-webpack');
+const webpack = require('webpack');
 
 const rootDir = path.resolve(__dirname, './');
 
@@ -40,4 +41,7 @@ module.exports = {
             "@mocks": path.resolve(rootDir,"src/mocks/"),
         },
     },
+    plugins: [
+      new webpack.IgnorePlugin({ resourceRegExp: /^pg-native$/ })
+    ]
 }

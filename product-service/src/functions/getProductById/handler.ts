@@ -1,6 +1,6 @@
 import { errorResponse, successResponse, ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
-import productService from 'src/services/productService';
+import productService from '../../services/productService';
 
 import schema from './schema';
 
