@@ -7,4 +7,4 @@ export default {
         count: { type: 'integer' }
     },
     required: ['title', 'description', 'price', 'count']
-}
+} as const;
