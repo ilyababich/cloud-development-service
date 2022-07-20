@@ -15,9 +15,7 @@ class PostgressProductService {
 
     public async getProductList () {
         const query = {
-            text: `select p.id, p.title, p.description, p.price, s.count 
-            from ${this.productsTable} p, ${this.stocksTable} s 
-            where p.id = s.product_id;`
+            text: `select p.id, p.title, p.description, p.price, s.count from ${this.productsTable} p, ${this.stocksTable} s where p.id = s.product_id;`
         }
 
         const result = await this.databaseClient.query(query);
@@ -27,9 +25,7 @@ class PostgressProductService {
 
     public async getProductById (id: string) {
         const query = {
-            text: `select p.id, p.title, p.description, p.price, s.count 
-            from ${this.productsTable} p, ${this.stocksTable} s 
-            where p.id = s.product_id and p.id = $1;`,
+            text: `select p.id, p.title, p.description, p.price, s.count from ${this.productsTable} p, ${this.stocksTable} s where p.id = s.product_id and p.id = $1;`,
             values: [id],
         }
 
