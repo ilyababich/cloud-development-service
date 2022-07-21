@@ -190,17 +190,12 @@
         "price": {
           "title": "CreateProduct.price",
           "type": "number"
-        },
-        "count": {
-          "title": "CreateProduct.count",
-          "type": "number"
         }
       },
       "required": [
         "title",
         "description",
-        "price",
-        "count"
+        "price"
       ],
       "additionalProperties": false,
       "title": "CreateProduct",
