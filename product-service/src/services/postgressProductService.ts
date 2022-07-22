@@ -46,8 +46,6 @@ class PostgressProductService {
 
         console.log('Product added to products table');
 
-        await this.databaseClient.query('COMMIT');
-
         const [entry] = productsResult.rows;
 
         const createStockQuery = {
@@ -62,8 +60,6 @@ class PostgressProductService {
         await this.databaseClient.query('COMMIT');
 
         const result = this.getProductById(entry.id);
-
-        await this.databaseClient.query('COMMIT');
 
         this.databaseClient.end();
 
