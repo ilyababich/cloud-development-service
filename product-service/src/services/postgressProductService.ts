@@ -61,6 +61,8 @@ class PostgressProductService {
 
         const result = this.getProductById(entry.id);
 
+        await this.databaseClient.query('COMMIT');
+
         this.databaseClient.end();
 
         return result;
