@@ -40,7 +40,7 @@ const serverlessConfiguration: AWS = {
       concurrency: 10,
     },
     autoswagger: {
-      host: 'https://1hf6b7hpr5.execute-api.eu-west-1.amazonaws.com/dev/'
+      host: '1hf6b7hpr5.execute-api.eu-west-1.amazonaws.com/dev/'
     }
   },
 };

@@ -26,6 +26,7 @@ export interface CreateProduct {
     title: string;
     description: string;
     price: number;
+    count: number;
 }
 
 export interface CommonFailed {

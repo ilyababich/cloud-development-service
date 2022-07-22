@@ -5,7 +5,7 @@ const documentation = {
     responseData: {
         200: {
             description: 'Ok',
-            bodyType: 'GetProductsList',
+            bodyType: 'GetProductByIdSuccess',
         },
         400: {
             description: 'Invalid request body',
