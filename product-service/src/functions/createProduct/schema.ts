@@ -3,7 +3,8 @@ export default {
     properties: {
         title: { type: 'string' },
         description: { type: 'string' },
-        price: { type: 'integer' }
+        price: { type: 'integer' },
+        count: {type: 'integer'}
     },
-    required: ['title', 'description', 'price']
+    required: ['title', 'description', 'price', 'count']
 } as const;

@@ -4,6 +4,7 @@ type TProduct = {
     title: string;
     description: string;
     price: number;
+    count: number;
 }
 
 class PostgressProductService {
@@ -33,16 +34,42 @@ class PostgressProductService {
 
     }
 
-    public async createProduct ({ title, description, price }: TProduct) {
+    public async createProduct ({ title, description, price, count }: TProduct) {
+        await this.databaseClient.query('BEGIN');
+
         const createProductQuery = {
-            text: `insert into ${this.productsTable} (title, description, price) values ($1,$2,$3);`,
+            text: `insert into ${this.productsTable} (title, description, price) values ($1,$2,$3) returning id;`,
             values: [title, description, price]
-        }
+        };
 
-        const result = await this.databaseClient.query(createProductQuery);
+        const productsResult = await this.databaseClient.query(createProductQuery);
 
-        
-        return result.rows[0] ? result.rows[0] : null;
+        console.log('Product added to products table');
+
+        await this.databaseClient.query('COMMIT');
+
+        const [entry] = productsResult.rows;
+
+        const createStockQuery = {
+            text: `insert into ${this.stocksTable} (product_id, count) values ($1,$2)`,
+            values: [entry.id, count]
+        };
+
+        await this.databaseClient.query(createStockQuery);
+
+        console.log('Count added to stock table');
+
+        await this.databaseClient.query('COMMIT');
+
+        const result = this.getProductById(entry.id);
+
+        await this.databaseClient.query('COMMIT');
+
+        this.databaseClient.end();
+
+        return result;
+
+
     }
 }
 
