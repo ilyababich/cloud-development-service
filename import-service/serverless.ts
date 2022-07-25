@@ -20,6 +20,17 @@ const serverlessConfiguration: AWS = {
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       BUCKET: '${env:BUCKET}',
     },
+    iam: {
+      role: {
+        statements: [
+          {
+            Effect: 'Allow',
+            Action: ['s3:GetObject', 's3:PutObject'],
+            Resource: ['arn:aws:s3:::my-amazing-shop-bucket']
+          }
+        ]
+      }
+    }
   },
   // import the function via paths
   functions: { importProductsFile },
