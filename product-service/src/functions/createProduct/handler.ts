@@ -7,7 +7,7 @@ import schema from './schema';
 export const createProduct: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 
 try {
-    console.log(`CreateProduct: ${JSON.stringify(event.body)}`)
+    console.log(`CreateProduct: event - ${JSON.stringify(event)}`)
     const products = await productService.createProduct(event.body);
     return successResponse({products, event});
 } catch(err) {

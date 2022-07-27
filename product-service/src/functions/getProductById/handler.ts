@@ -9,7 +9,7 @@ export const getProductById: ValidatedEventAPIGatewayProxyEvent<typeof schema> =
   try {
     const {id: productId} = event.pathParameters;
 
-    console.log(`GetProductById: ${JSON.stringify(event.pathParameters)}`)
+    console.log(`GetProductById: event - ${JSON.stringify(event)}`)
     const product = await productService.getProductById(productId);
   
     if (!product) {
