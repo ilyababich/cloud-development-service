@@ -6,7 +6,7 @@ import schema from './schema';
 
 export const getProductsList: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 try {
-  console.log('GetProductList');
+  console.log(`GetProductList: event - ${JSON.stringify(event)}`);
   const products = await productService.getProductList();
 
   return successResponse({products, event})

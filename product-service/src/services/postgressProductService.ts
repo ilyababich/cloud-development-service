@@ -35,37 +35,45 @@ class PostgressProductService {
     }
 
     public async createProduct ({ title, description, price, count }: TProduct) {
-        await this.databaseClient.query('BEGIN');
 
-        const createProductQuery = {
-            text: `insert into ${this.productsTable} (title, description, price) values ($1,$2,$3) returning id;`,
-            values: [title, description, price]
-        };
+        try {
+            await this.databaseClient.query('BEGIN');
 
-        const productsResult = await this.databaseClient.query(createProductQuery);
+            const createProductQuery = {
+                text: `insert into ${this.productsTable} (title, description, price) values ($1,$2,$3) returning id;`,
+                values: [title, description, price]
+            };
 
-        console.log('Product added to products table');
+            const productsResult = await this.databaseClient.query(createProductQuery);
 
-        const [entry] = productsResult.rows;
+            console.log('Product added to products table');
 
-        const createStockQuery = {
-            text: `insert into ${this.stocksTable} (product_id, count) values ($1,$2)`,
-            values: [entry.id, count]
-        };
+            const [entry] = productsResult.rows;
 
-        await this.databaseClient.query(createStockQuery);
+            const createStockQuery = {
+                text: `insert into ${this.stocksTable} (product_id, count) values ($1,$2)`,
+                values: [entry.id, count]
+            };
 
-        console.log('Count added to stock table');
+            await this.databaseClient.query(createStockQuery);
 
-        await this.databaseClient.query('COMMIT');
+            console.log('Count added to stock table');
 
-        const result = this.getProductById(entry.id);
+            await this.databaseClient.query('COMMIT');
 
-        await this.databaseClient.query('COMMIT');
+            const result = this.getProductById(entry.id);
 
-        this.databaseClient.end();
+            await this.databaseClient.query('COMMIT');
 
-        return result;
+            return result;
+        } catch(error) {
+            console.log(error);
+            await this.databaseClient.query('ROLLBACK');
+            throw error;
+        } finally {
+            this.databaseClient.end();
+        }
+        
 
 
     }
