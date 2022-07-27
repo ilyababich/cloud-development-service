@@ -1,11 +1,13 @@
 import type { AWS } from '@serverless/typescript';
 
 import importProductsFile from '@functions/importProductsFile';
+import importFileParser from '@functions/importFileParser';
+
 
 const serverlessConfiguration: AWS = {
   service: 'import-service',
   frameworkVersion: '3',
-  plugins: ['serverless-esbuild'],
+  plugins: ['serverless-esbuild', 'serverless-offline'],
   useDotenv: true,
   provider: {
     name: 'aws',
@@ -17,8 +19,7 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
-      BUCKET: '${env:BUCKET}',
+      NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000'
     },
     iam: {
       role: {
@@ -26,14 +27,14 @@ const serverlessConfiguration: AWS = {
           {
             Effect: 'Allow',
             Action: ['s3:GetObject', 's3:PutObject'],
-            Resource: ['arn:aws:s3:::my-amazing-shop-bucket']
+            Resource: ['arn:aws:s3:::my-amazing-shop-bucket/*']
           }
         ]
       }
     }
   },
   // import the function via paths
-  functions: { importProductsFile },
+  functions: { importProductsFile, importFileParser },
   package: { individually: true },
   custom: {
     esbuild: {

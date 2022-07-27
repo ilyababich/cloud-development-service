@@ -1,6 +1,7 @@
 import * as AWS from 'aws-sdk';
 import { errorResponse, successResponse, ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
+import { BUCKET_NAME, UPLOADED_FOLDER } from 'src/consts';
 
 const importProductsFile: ValidatedEventAPIGatewayProxyEvent<typeof Object> = async (event) => {
   try {
@@ -8,8 +9,8 @@ const importProductsFile: ValidatedEventAPIGatewayProxyEvent<typeof Object> = as
     const catalogName = event.queryStringParameters.name;
 
     const params = {
-      Bucket: process.env.BUCKET,
-      Key: `uploaded/${catalogName}`,
+      Bucket: BUCKET_NAME,
+      Key: `${UPLOADED_FOLDER}/${catalogName}`,
       Expires: 60,
       ContentType: 'txt/csv',
     };
