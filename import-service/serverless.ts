@@ -26,7 +26,12 @@ const serverlessConfiguration: AWS = {
         statements: [
           {
             Effect: 'Allow',
-            Action: ['s3:GetObject', 's3:PutObject'],
+            Action: ['s3:ListBucket'],
+            Resource: ['arn:aws:s3:::my-amazing-shop-bucket']
+          },
+          {
+            Effect: 'Allow',
+            Action: ['s3:*'],
             Resource: ['arn:aws:s3:::my-amazing-shop-bucket/*']
           }
         ]
