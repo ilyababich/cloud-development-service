@@ -1,18 +1,19 @@
+import csv from 'csv-parser';
 import * as AWS from 'aws-sdk';
 import { middyfy } from '@libs/lambda';
 import { S3Event } from 'aws-lambda';
 // import { BUCKET_NAME, PARSED_FOLDER, UPLOADED_FOLDER } from 'src/consts';
 import { errorResponse, successResponse } from '@libs/api-gateway';
 import { BUCKET_NAME } from 'src/consts';
-// import { createReadStream } from 'fs';
+import { createReadStream } from 'fs';
 
 const importFileParser= async (event: S3Event) => {
     try {
         const s3 = new AWS.S3({region: 'eu-west-1'});
   
-        console.log('Records:', event.Records);
+        console.log('RECORDS::', event.Records);
     
-        event.Records.map(async (record) => {
+        await Promise.all(event.Records.map(async (record) => {
             // await s3.copyObject({
             //     Bucket: BUCKET_NAME,
             //     CopySource: `${BUCKET_NAME}/${record.s3.object.key}`,
@@ -24,9 +25,11 @@ const importFileParser= async (event: S3Event) => {
                 Key: record.s3.object.key
             }).promise();
 
+            console.log('OBJECT::', object);
 
-            
-        })
+            // to fix parsing functionality
+            createReadStream(object.Body.toString()).pipe(csv()).on('data', (data) => console.log('RECORD::', data)).on('error', (error) => console.log(error)).on('end', () => {})
+        }))
 
         return successResponse({message: 'Success'})
     } catch (err) {
