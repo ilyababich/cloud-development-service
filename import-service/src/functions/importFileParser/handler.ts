@@ -20,15 +20,21 @@ const importFileParser= async (event: S3Event) => {
             //     Key: record.s3.object.key.replace(UPLOADED_FOLDER, PARSED_FOLDER)
             // }).promise()
 
-           const object = await s3.getObject({
+           const objectReadSteram = s3.getObject({
                 Bucket: BUCKET_NAME,
                 Key: record.s3.object.key
-            }).promise();
+            }).createReadStream();
 
-            console.log('OBJECT::', object);
-
-            // to fix parsing functionality
-            createReadStream(object.Body.toString()).pipe(csv()).on('data', (data) => console.log('RECORD::', data)).on('error', (error) => console.log(error)).on('end', () => {})
+            await new Promise((res, rej) => {
+                objectReadSteram.pipe(csv())
+                    .on('data', (data) => console.log('RECORD::', data))
+                    .on('error', (error) => {
+                        console.log(error);
+                        rej();
+                    })
+                    .on('end', () => { res('Success') })
+            })
+            
         }))
 
         return successResponse({message: 'Success'})
