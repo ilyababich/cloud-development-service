@@ -7,7 +7,7 @@ import importFileParser from '@functions/importFileParser';
 const serverlessConfiguration: AWS = {
   service: 'import-service',
   frameworkVersion: '3',
-  plugins: ['serverless-esbuild', 'serverless-offline'],
+  plugins: ['serverless-esbuild', 'serverless-offline', 'serverless-auto-swagger'],
   useDotenv: true,
   provider: {
     name: 'aws',
@@ -52,6 +52,9 @@ const serverlessConfiguration: AWS = {
       platform: 'node',
       concurrency: 10,
     },
+    autoswagger: {
+      host: 'r96qinczs1.execute-api.eu-west-1.amazonaws.com/dev/'
+    }
   },
 };
 

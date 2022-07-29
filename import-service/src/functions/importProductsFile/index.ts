@@ -1,4 +1,5 @@
 import { handlerPath } from '@libs/handler-resolver';
+import documentation from './documentation';
 
 export default {
   handler: `${handlerPath(__dirname)}/handler.main`,
@@ -13,7 +14,8 @@ export default {
               name: true,
             }
           }
-        }
+        },
+        ...documentation,
       },
     },
   ],
