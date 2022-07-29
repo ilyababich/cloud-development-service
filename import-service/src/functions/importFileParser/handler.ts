@@ -2,10 +2,8 @@ import csv from 'csv-parser';
 import * as AWS from 'aws-sdk';
 import { middyfy } from '@libs/lambda';
 import { S3Event } from 'aws-lambda';
-// import { BUCKET_NAME, PARSED_FOLDER, UPLOADED_FOLDER } from 'src/consts';
+import { BUCKET_NAME, PARSED_FOLDER, UPLOADED_FOLDER } from 'src/consts';
 import { errorResponse, successResponse } from '@libs/api-gateway';
-import { BUCKET_NAME } from 'src/consts';
-import { createReadStream } from 'fs';
 
 const importFileParser= async (event: S3Event) => {
     try {
@@ -14,12 +12,6 @@ const importFileParser= async (event: S3Event) => {
         console.log('RECORDS::', event.Records);
     
         await Promise.all(event.Records.map(async (record) => {
-            // await s3.copyObject({
-            //     Bucket: BUCKET_NAME,
-            //     CopySource: `${BUCKET_NAME}/${record.s3.object.key}`,
-            //     Key: record.s3.object.key.replace(UPLOADED_FOLDER, PARSED_FOLDER)
-            // }).promise()
-
            const objectReadSteram = s3.getObject({
                 Bucket: BUCKET_NAME,
                 Key: record.s3.object.key
@@ -30,9 +22,26 @@ const importFileParser= async (event: S3Event) => {
                     .on('data', (data) => console.log('RECORD::', data))
                     .on('error', (error) => {
                         console.log(error);
-                        rej();
+                        rej(error);
                     })
-                    .on('end', () => { res('Success') })
+                    .on('end', async () => { 
+                        try {
+                            await s3.copyObject({
+                                Bucket: BUCKET_NAME,
+                                CopySource: `${BUCKET_NAME}/${record.s3.object.key}`,
+                                Key: record.s3.object.key.replace(UPLOADED_FOLDER, PARSED_FOLDER)
+                            }).promise();
+
+                            await s3.deleteObject({
+                                Bucket: BUCKET_NAME,
+                                Key: record.s3.object.key,
+                            }).promise();
+
+                          return res('Success');
+                        } catch(error) {
+                            return rej(error)
+                        }
+                    });
             })
             
         }))
