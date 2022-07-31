@@ -21,3 +21,15 @@ export interface GetProductsList {
     products: Product[];
     event: {};
 }
+
+export interface CreateProduct {
+    title: string;
+    description: string;
+    price: number;
+    count: number;
+}
+
+export interface CommonFailed {
+    message: string;
+    event: {};
+}

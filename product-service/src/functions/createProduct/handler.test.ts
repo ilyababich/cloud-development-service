@@ -1,13 +1,14 @@
 // @ts-nocheck
 import { errorResponse, successResponse } from "@libs/api-gateway";
-import { getProductsList } from "./handler";
+import productService from "../../services/productService";
+import { createProduct } from "./handler";
 
 jest.mock('@libs/lambda');
 jest.mock('@libs/api-gateway');
 
 jest.mock('../../services/productService', () => ({
     default: {
-        getProductList: jest.fn().mockResolvedValueOnce([
+        createProduct: jest.fn().mockResolvedValueOnce([
             {
                 "count": 4,
                 "description": "Custom Short Product Description1",
@@ -24,11 +25,22 @@ jest.mock('../../services/productService', () => ({
               },
         ]).mockRejectedValue(new Error('Error'))
     }
-}))
+}));
 
-describe('getProductsList:handler', () => {
+const event = {
+    body: {
+        title: 'title',
+        description: 'description',
+        price: 1,
+        count: 1
+    }
+}
+
+describe('createProduct:handler', () => {
     it('should call successResponse with correct data', async () => {
-        await getProductsList({});
+        await createProduct(event);
+
+        expect(productService.createProduct).toHaveBeenCalledWith(event.body)
 
         expect(successResponse).toBeCalledWith({
             products: [
@@ -47,12 +59,12 @@ describe('getProductsList:handler', () => {
                     "title": "ProductNew"
                   },
             ],
-            event: {},
+            event,
         })
     });
 
     it('should call errorResponse if failed', async () => {
-        await getProductsList({});
+        await createProduct(event);
 
         expect(errorResponse).toBeCalledWith(new Error('Error'))
     })

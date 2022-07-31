@@ -1,13 +1,43 @@
 // @ts-nocheck
-import { formatJSONResponse } from "@libs/api-gateway";
+import { successResponse, errorResponse } from "@libs/api-gateway";
 
 import { getProductById } from "./handler";
 
 jest.mock('@libs/lambda');
-jest.mock('@libs/api-gateway')
+jest.mock('@libs/api-gateway');
+
+jest.mock('../../services/productService', () => ({
+    default: {
+        getProductById: jest.fn().mockResolvedValueOnce(
+            {
+                "count": 4,
+                "description": "Custom Short Product Description1",
+                "id": "7567ec4b-b10c-48c5-9345-fc73c48a80aa",
+                "price": 2.4,
+                "title": "ProductOne"
+            },
+        ).mockResolvedValueOnce(null).mockRejectedValue(new Error('Error'))
+    }
+}))
 
 describe('getProductById:handler', () => {
-    it('should call formatJSONResponse with correct data if product exist', async () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    })
+    it('should call successResponse with correct data if product exist', async () => {
+        jest.mock('../../services/productService', () => ({
+            default: {
+                getProductById: jest.fn().mockResolvedValueOnce(
+                    {
+                        "count": 4,
+                        "description": "Custom Short Product Description1",
+                        "id": "7567ec4b-b10c-48c5-9345-fc73c48a80aa",
+                        "price": 2.4,
+                        "title": "ProductOne"
+                    },
+                ).mockResolvedValueOnce(null).mockRejectedValue(new Error('Error'))
+            }
+        }))
         const event = {
             name: 'name',
             pathParameters: {
@@ -17,7 +47,7 @@ describe('getProductById:handler', () => {
 
         await getProductById(event)
 
-        expect(formatJSONResponse).toBeCalledWith({
+        expect(successResponse).toBeCalledWith({
             product: {
                 "count": 4,
                 "description": "Custom Short Product Description1",
@@ -28,8 +58,7 @@ describe('getProductById:handler', () => {
             event,
         });
     });
-
-    it('should call formatJSONResponse with correct data if product does not exist', async () => {
+    it('should call successResponse with correct data if product does not exist', async () => {
         const event = {
             name: 'name',
             pathParameters: {
@@ -39,9 +68,18 @@ describe('getProductById:handler', () => {
 
         await getProductById(event)
 
-        expect(formatJSONResponse).toBeCalledWith({
-            message: 'Product Not Found!',
-            event,
-        }, 404);
+        expect(successResponse).toBeCalledTimes(1);
     });
+    it('should call errorResponse if failed', async () => {
+        const event = {
+            name: 'name',
+            pathParameters: {
+                id: "7567ec4b-b10c-48c5-9345-fc73c48a80aa"
+            }
+        };
+
+        await getProductById(event);
+
+        expect(errorResponse).toBeCalledWith(new Error('Error'))
+    })
 });
