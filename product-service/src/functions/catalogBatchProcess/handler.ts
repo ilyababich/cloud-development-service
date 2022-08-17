@@ -6,13 +6,14 @@ import { TProduct } from 'src/services/postgressProductService';
 
 export const CatalogBatchProcess: SQSHandler = async (event: SQSEvent) => {
     try {
-        const products = await Promise.all(event.Records.map(async ({ body }) => {
-            const productInfo = JSON.parse(body);
-            console.log(productInfo)
-            const product = await productService.createProduct(productInfo as TProduct);
-            return product;
-        }));
-        console.log('Success', products)
+
+        for (let record of event.Records) {
+            const productInfo = JSON.parse(record.body);
+            console.log(productInfo);
+      
+           await productService.createProduct(productInfo as TProduct);
+        }
+        console.log('Success')
     } catch(err) {
         console.log('Error', err)
     }
