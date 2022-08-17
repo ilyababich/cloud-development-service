@@ -1,6 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
-import { getProductsList, getProductById, createProduct } from './src/functions';
+import { getProductsList, getProductById, createProduct, catalogButchProcess } from './src/functions';
 
 const serverlessConfiguration: AWS = {
   service: 'product-service',
@@ -24,9 +24,34 @@ const serverlessConfiguration: AWS = {
       PGPASSWORD:'${env:PGPASSWORD}',
       PGPORT:'${env:PGPORT}',
     },
+
+    iamRoleStatements: [
+      {
+        Effect: "Allow",
+        Action: "sqs:*",
+        Resource: {
+          "Fn::GetAtt": ["catalogItemsQueue", "Arn"],
+        }
+      }
+    ]  
+  },
+  resources: {
+    Resources: {
+      catalogItemsQueue: {
+        Type: "AWS::SQS::Queue",
+        // Properties: {
+        //   QueueName: 'catalogItemsQueue'
+        // }
+      }
+    },
+    Outputs: {
+      queueUrl: {
+        Value: "!Ref catalogItemsQueue",
+      }
+    }
   },
   // import the function via paths
-  functions: { getProductsList, getProductById, createProduct },
+  functions: { getProductsList, getProductById, createProduct, catalogButchProcess },
   package: { individually: true },
   custom: {
     esbuild: {

@@ -1,6 +1,6 @@
 import { Client } from 'pg';
 
-type TProduct = {
+export type TProduct = {
     title: string;
     description: string;
     price: number;
