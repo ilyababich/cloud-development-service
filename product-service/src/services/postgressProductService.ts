@@ -67,7 +67,7 @@ class PostgressProductService {
 
             return result;
         } catch(error) {
-            console.log(error);
+            console.log('Database error:', error);
             await this.databaseClient.query('ROLLBACK');
             throw error;
         } finally {

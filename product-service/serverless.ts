@@ -23,6 +23,9 @@ const serverlessConfiguration: AWS = {
       PGDATABASE:'${env:PGDATABASE}',
       PGPASSWORD:'${env:PGPASSWORD}',
       PGPORT:'${env:PGPORT}',
+      SNS_ARN: {
+        Ref: 'createProductTopic',
+      }
     },
 
     iamRoleStatements: [
@@ -32,6 +35,13 @@ const serverlessConfiguration: AWS = {
         Resource: {
           "Fn::GetAtt": ["catalogItemsQueue", "Arn"],
         }
+      }, 
+      {
+        Effect: "Allow",
+        Action: "sns:*",
+        Resource: {
+          Ref: "createProductTopic"
+        }
       }
     ]  
   },
@@ -39,9 +49,19 @@ const serverlessConfiguration: AWS = {
     Resources: {
       catalogItemsQueue: {
         Type: "AWS::SQS::Queue",
-        // Properties: {
-        //   QueueName: 'catalogItemsQueue'
-        // }
+      },
+      createProductTopic: {
+        Type: "AWS::SNS::Topic",
+      },
+      createProductSubscription: {
+        Type: "AWS::SNS::Subscription",
+        Properties: {
+          Endpoint: "bilyha.ilya@gmail.com",
+          Protocol: "email",
+          TopicArn: {
+            Ref: "createProductTopic" 
+          }
+        }
       }
     },
     Outputs: {
