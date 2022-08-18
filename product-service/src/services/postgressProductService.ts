@@ -1,4 +1,4 @@
-import { Client } from 'pg';
+import { Client, Pool } from 'pg';
 
 export type TProduct = {
     title: string;
@@ -36,15 +36,17 @@ class PostgressProductService {
 
     public async createProduct ({ title, description, price, count }: TProduct) {
 
+        const pool = new Pool();
+
         try {
-            await this.databaseClient.query('BEGIN');
+            await pool.query('BEGIN');
 
             const createProductQuery = {
                 text: `insert into ${this.productsTable} (title, description, price) values ($1,$2,$3) returning id;`,
                 values: [title, description, price]
             };
 
-            const productsResult = await this.databaseClient.query(createProductQuery);
+            const productsResult = await pool.query(createProductQuery);
 
             console.log('Product added to products table');
 
@@ -55,23 +57,23 @@ class PostgressProductService {
                 values: [entry.id, count]
             };
 
-            await this.databaseClient.query(createStockQuery);
+            await pool.query(createStockQuery);
 
             console.log('Count added to stock table');
 
-            await this.databaseClient.query('COMMIT');
+            await pool.query('COMMIT');
 
             const result = this.getProductById(entry.id);
 
-            await this.databaseClient.query('COMMIT');
+            await pool.query('COMMIT');
 
             return result;
         } catch(error) {
             console.log('Database error:', error);
-            await this.databaseClient.query('ROLLBACK');
+            await pool.query('ROLLBACK');
             throw error;
         } finally {
-            this.databaseClient.end();
+            pool.end();
         }
         
 
