@@ -2,7 +2,7 @@ import { middyfy } from '@libs/lambda';
 import { SQSEvent, SQSHandler } from 'aws-lambda';
 import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 
-import productService from 'src/services/productService';
+import productService from '../../services/productService';
 
 export const CatalogBatchProcess: SQSHandler = async (event: SQSEvent) => {
     const snsClient = new SNSClient({ region: 'eu-west-1'});
@@ -24,6 +24,12 @@ export const CatalogBatchProcess: SQSHandler = async (event: SQSEvent) => {
             Subject: 'New product created',
             Message: record.body,
             TopicArn: process.env.SNS_ARN,
+            MessageAttributes: {
+                price: {
+                  DataType: "Number", 
+                  StringValue: productInfo.price,
+                }
+              },
            }))
         }
         console.log('Success')
