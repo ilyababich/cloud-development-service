@@ -19,7 +19,8 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000'
+      NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      SQS_URL: '${env:SQS_URL}'
     },
     iam: {
       role: {
@@ -33,6 +34,11 @@ const serverlessConfiguration: AWS = {
             Effect: 'Allow',
             Action: ['s3:*'],
             Resource: ['arn:aws:s3:::my-amazing-shop-bucket/*']
+          },
+          {
+            Effect: 'Allow',
+            Resource: 'arn:aws:sqs:eu-west-1:339437921766:product-service-dev-catalogItemsQueue-d5AVOisrLOAT',
+            Action: "sqs:SendMessage",
           }
         ]
       }

@@ -1,6 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
-import { getProductsList, getProductById, createProduct } from './src/functions';
+import { getProductsList, getProductById, createProduct, catalogButchProcess } from './src/functions';
 
 const serverlessConfiguration: AWS = {
   service: 'product-service',
@@ -23,10 +23,71 @@ const serverlessConfiguration: AWS = {
       PGDATABASE:'${env:PGDATABASE}',
       PGPASSWORD:'${env:PGPASSWORD}',
       PGPORT:'${env:PGPORT}',
+      SNS_ARN: {
+        Ref: 'createProductTopic',
+      }
     },
+
+    iamRoleStatements: [
+      {
+        Effect: "Allow",
+        Action: "sqs:*",
+        Resource: {
+          "Fn::GetAtt": ["catalogItemsQueue", "Arn"],
+        }
+      }, 
+      {
+        Effect: "Allow",
+        Action: "sns:*",
+        Resource: {
+          Ref: "createProductTopic"
+        }
+      }
+    ]  
+  },
+  resources: {
+    Resources: {
+      catalogItemsQueue: {
+        Type: "AWS::SQS::Queue",
+      },
+      createProductTopic: {
+        Type: "AWS::SNS::Topic",
+      },
+      highPriceProductSubscription: {
+        Type: "AWS::SNS::Subscription",
+        Properties: {
+          Endpoint: "bilyha.ilya@gmail.com",
+          Protocol: "email",
+          TopicArn: {
+            Ref: "createProductTopic" 
+          },
+          FilterPolicy: {
+            "price": [{"numeric": [">=", 1000]}]
+          }
+        }
+      },
+      lowPriceProductSubscription: {
+        Type: "AWS::SNS::Subscription",
+        Properties: {
+          Endpoint: "ilya.babych.aws@gmail.com",
+          Protocol: "email",
+          TopicArn: {
+            Ref: "createProductTopic" 
+          },
+          FilterPolicy: {
+            "price": [{"numeric": ["<", 1000]}]
+          }
+        }
+      }
+    },
+    Outputs: {
+      queueUrl: {
+        Value: "!Ref catalogItemsQueue",
+      }
+    }
   },
   // import the function via paths
-  functions: { getProductsList, getProductById, createProduct },
+  functions: { getProductsList, getProductById, createProduct, catalogButchProcess },
   package: { individually: true },
   custom: {
     esbuild: {
