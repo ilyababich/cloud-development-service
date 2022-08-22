@@ -15,6 +15,7 @@ export default {
             }
           }
         },
+        cors: true,
         authorizer: {
           name: 'basicAuthorizer',
           identitySource: 'method.request.header.Authorization',
